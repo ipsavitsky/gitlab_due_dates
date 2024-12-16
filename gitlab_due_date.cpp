@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
   auto u = g.get_current_user();
   spdlog::info("username: {}; id: {}", u.username, u.id);
 
-  auto i = g.get_today_issues_by_user(u);
+  auto i = g.get_overdue_issues_by_user(u);
 
   for (auto &iss : i) {
     spdlog::info("Issue due today: {}", iss.name);

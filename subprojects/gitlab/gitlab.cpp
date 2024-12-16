@@ -1,68 +1,68 @@
-#include <gitlab.hpp>
 #include <chrono>
-#include <format>
-#include <stdexcept>
 #include <cpr/cpr.h>
-#include <nlohmann/json.hpp>
+#include <format>
+#include <gitlab.hpp>
+#include <stdexcept>
 
 namespace gitlab {
-  user instance::get_current_user() {
-    cpr::Response r = cpr::Get(cpr::Url{std::format("{}/user", this->base_url)},
-                               cpr::Header{{"PRIVATE-TOKEN", this->token}});
+user instance::get_current_user() {
+  cpr::Response r = cpr::Get(cpr::Url{std::format("{}/user", this->base_url)},
+                             cpr::Header{{"PRIVATE-TOKEN", this->token}});
 
-    nlohmann::json j;
-    if (r.status_code == 200) {
-      j = nlohmann::json::parse(r.text);
-    } else {
-      throw std::runtime_error(
-          std::format("Request return errror, return code: {}", r.status_code));
-    }
-
-    return {j["id"], j["username"]};
+  nlohmann::json j;
+  if (r.status_code == 200) {
+    j = nlohmann::json::parse(r.text);
+  } else {
+    throw std::runtime_error(
+        std::format("Request return errror, return code: {}", r.status_code));
   }
 
-  std::vector<issue> instance::get_today_issues_by_user(const user &user) {
-    cpr::Response r =
-        cpr::Get(cpr::Url{std::format("{}/issues", this->base_url)},
-                 cpr::Parameters{{"assignee_id", std::to_string(user.id)},
-                                 {"state", "opened"},
-                                 {"due_date", "today"}},
-                 cpr::Header{{"PRIVATE-TOKEN", this->token}});
+  return j;
+}
 
-    nlohmann::json j;
-    if (r.status_code == 200) {
-      j = nlohmann::json::parse(r.text);
-    } else {
-      throw std::runtime_error(
-          std::format("Request return errror, return code: {}", r.status_code));
-    }
+std::vector<issue> instance::get_overdue_issues_by_user(const user &user) {
+  cpr::Response r =
+      cpr::Get(cpr::Url{std::format("{}/issues", this->base_url)},
+               cpr::Parameters{{"assignee_id", std::to_string(user.id)},
+                               {"state", "opened"},
+                               {"due_date", "overdue"}},
+               cpr::Header{{"PRIVATE-TOKEN", this->token}});
 
-    std::vector<issue> issues;
-    for (auto &issue_json : j) {
-      issues.push_back({issue_json["id"], issue_json["iid"],
-                        issue_json["project_id"], issue_json["title"],
-                        issue_json["due_date"], issue_json["labels"]});
-    }
-
-    return issues;
+  nlohmann::json j;
+  if (r.status_code == 200) {
+    j = nlohmann::json::parse(r.text);
+  } else {
+    throw std::runtime_error(
+        std::format("Request return errror, return code: {}", r.status_code));
   }
 
-  void instance::postpone_issue_by_week(const issue &iss) {
-    std::istringstream in{iss.due_date};
-    std::chrono::time_point<std::chrono::utc_clock> due_date;
-    in >> std::chrono::parse("%F", due_date);
-    std::chrono::duration week = std::chrono::days(7);
-    due_date += week;
+  return j;
+}
 
-    cpr::Response r =
-        cpr::Put(cpr::Url{std::format("{}/projects/{}/issues/{}",
-                                      this->base_url, iss.project_id, iss.iid)},
-                 cpr::Parameters{{"due_date", std::format("{:%F}", due_date)}},
-                 cpr::Header{{"PRIVATE-TOKEN", this->token}});
+void instance::postpone_issue_by_week(const issue &iss) {
+  const std::chrono::time_point now{std::chrono::system_clock::now()};
+  std::chrono::sys_days current_date{
+      std::chrono::floor<std::chrono::days>(now)};
 
-    if (r.status_code != 200) {
-      throw std::runtime_error(
-          std::format("Request return errror, return code: {}", r.status_code));
+  for (int i = 1; i <= 7; ++i) {
+    std::chrono::weekday tuesday{2};
+
+    ++current_date;
+    if (std::chrono::weekday{current_date} == tuesday) {
+      // std::chrono::weekday{current_date + std::chrono::days(i)};
+      break;
     }
   }
+
+  cpr::Response r =
+      cpr::Put(cpr::Url{std::format("{}/projects/{}/issues/{}", this->base_url,
+                                    iss.project_id, iss.iid)},
+               cpr::Parameters{{"due_date", std::format("{:%F}", current_date)}},
+               cpr::Header{{"PRIVATE-TOKEN", this->token}});
+
+  if (r.status_code != 200) {
+    throw std::runtime_error(
+        std::format("Request return errror, return code: {}", r.status_code));
+  }
+}
 } // namespace gitlab

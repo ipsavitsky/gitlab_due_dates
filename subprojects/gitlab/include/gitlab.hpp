@@ -1,3 +1,4 @@
+#include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
 
@@ -5,7 +6,9 @@ namespace gitlab {
 struct user {
   int id;
   std::string username;
+  NLOHMANN_DEFINE_TYPE_INTRUSIVE(user, id, username)
 };
+
 struct issue {
   int id;
   int iid;
@@ -13,7 +16,9 @@ struct issue {
   std::string name;
   std::string due_date;
   std::vector<std::string> labels;
+  NLOHMANN_DEFINE_TYPE_INTRUSIVE(issue, id, iid, project_id, name, due_date, labels)
 };
+
 class instance {
 private:
   std::string base_url;
@@ -24,7 +29,7 @@ public:
       : base_url(base_url_), token(token_){};
 
   user get_current_user();
-  std::vector<issue> get_today_issues_by_user(const user &user);
+  std::vector<issue> get_overdue_issues_by_user(const user &user);
   void postpone_issue_by_week(const issue &iss);
 };
 } // namespace gitlab
