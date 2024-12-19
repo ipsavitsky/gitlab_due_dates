@@ -13,10 +13,10 @@ struct issue {
   int id;
   int iid;
   int project_id;
-  std::string name;
+  std::string title;
   std::string due_date;
   std::vector<std::string> labels;
-  NLOHMANN_DEFINE_TYPE_INTRUSIVE(issue, id, iid, project_id, name, due_date, labels)
+  NLOHMANN_DEFINE_TYPE_INTRUSIVE(issue, id, iid, project_id, title, due_date, labels)
 };
 
 class instance {
