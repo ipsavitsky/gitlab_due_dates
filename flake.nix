@@ -25,10 +25,6 @@
             version = "0.1.0";
             src = ./subprojects/gitlab;
             mesonBuildType = "release";
-            outputs = [
-              "dev"
-              "out"
-            ];
             nativeBuildInputs = with pkgs; [
               meson
               ninja
