@@ -15,6 +15,7 @@ gitlab = shared_library(
     'gitlab.cpp',
     dependencies: [json, cpr],
     include_directories: incdir,
+    install:true,
 )
 
 gitlab_dep = declare_dependency(
