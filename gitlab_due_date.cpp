@@ -1,7 +1,8 @@
 #include <nlohmann/json.hpp>
-#include <spdlog/spdlog.h>
-#include <gitlab.hpp>
 #include <fstream>
+#include <gitlab.hpp>
+#include <spdlog/spdlog.h>
+#include <stdexcept>
 #include <string>
 
 int main(int argc, char *argv[]) {
@@ -16,7 +17,21 @@ int main(int argc, char *argv[]) {
   std::string base_url =
       conf["base_url"].empty() ? "https://gitlab.com/api/v4" : conf["base_url"];
 
-  gitlab::instance g(base_url, conf["token"]);
+  std::string token;
+  if (conf["token"].empty()) {
+    if (const char *str_token = std::getenv("GITLAB_DD_TOKEN")) {
+      spdlog::debug("reading the token from envvar");
+      token = str_token;
+    } else {
+      throw std::runtime_error(
+          "Token could not be read from either configuration or environment");
+    }
+  } else {
+    spdlog::debug("using token from configuration");
+    token = conf["token"];
+  }
+
+  gitlab::instance g(base_url, token);
 
   auto u = g.get_current_user();
   spdlog::info("username: {}; id: {}", u.username, u.id);

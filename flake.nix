@@ -68,6 +68,7 @@
               gcc
               ninja
               pkg-config
+              clang-tools
               cmake
               libcpr
               nlohmann_json
