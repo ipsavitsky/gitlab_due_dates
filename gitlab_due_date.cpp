@@ -39,11 +39,7 @@ int main(int argc, char *argv[]) {
   auto i = g.get_overdue_issues_by_user(u);
 
   for (auto &iss : i) {
-    spdlog::info("Issue due today: {}", iss.title);
-    if (std::ranges::contains(iss.labels, "lane::staging")) {
-      spdlog::info("it has lane::staging label, skipping");
-      continue;
-    }
+    spdlog::info("Overdue issues: {}", iss.title);
 
     g.postpone_issue_by_week(iss);
   }

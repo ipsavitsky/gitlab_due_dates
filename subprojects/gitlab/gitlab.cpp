@@ -49,7 +49,6 @@ void instance::postpone_issue_by_week(const issue &iss) {
 
     ++current_date;
     if (std::chrono::weekday{current_date} == tuesday) {
-      // std::chrono::weekday{current_date + std::chrono::days(i)};
       break;
     }
   }

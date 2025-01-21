@@ -1,6 +1,6 @@
 # Gitlab due dates
 
-Automatically move tasks due today a week from now.
+Automatically move overdue tasks a week from now.
 
 ## Building
 
@@ -19,7 +19,3 @@ meson compile -C build
     "token": "your token goes here"
 }
 ```
-
-## Temporary quirks
-
-Any issue with tag `lane::staging` will be skipped
