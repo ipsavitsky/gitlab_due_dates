@@ -77,5 +77,9 @@
           };
         };
       }
-    );
+    ) // {
+      nixosModules = {
+        gitlab_dd = import ./nix/service.nix;
+      };
+    };
 }
