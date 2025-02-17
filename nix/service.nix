@@ -12,7 +12,10 @@
       type = lib.types.path;
     };
 
-    package = lib.mkPackageOption gitlab_due_date "gitlab_due_date";
+    package = lib.mkOption {
+      type = lib.types.package;
+      default = gitlab_due_date.${config.nixpkgs.system}.default;
+    };
   };
 
   config = lib.mkIf config.services.gitlab_dd.enable {
