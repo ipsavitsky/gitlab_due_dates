@@ -77,9 +77,10 @@
           };
         };
       }
-    ) // {
+    )
+    // {
       nixosModules = {
-        gitlab_dd = import ./nix/service.nix;
+        gitlab_dd = import ./nix/service.nix { gitlab_due_date = self.packages; };
       };
     };
 }

@@ -1,21 +1,18 @@
+{ gitlab_due_date }:
 {
   lib,
-  pkgs,
   config,
   ...
 }:
 {
   options.services.gitlab_dd = {
-    enable = lib.mkOption {
-      type = lib.types.bool;
-      default = false;
-    };
+    enable = lib.mkEnableOption "gitlab_dd";
 
-    config = lib.mkOption {
+    config_path = lib.mkOption {
       type = lib.types.path;
     };
 
-    package = lib.mkPackageOption pkgs "" { };
+    package = lib.mkPackageOption gitlab_due_date "gitlab_due_date";
   };
 
   config = lib.mkIf config.services.gitlab_dd.enable {
@@ -30,7 +27,7 @@
 
     systemd.services."gitlab_due_date" = {
       script = ''
-        ${config.services.gitlab_dd.package}/bin/gitlab_due_date ${config.services.gitlab_dd.config}
+        ${config.services.gitlab_dd.package}/bin/gitlab_due_date ${config.services.gitlab_dd.config_path}
       '';
 
       serviceConfig = {
