@@ -14,7 +14,7 @@
 
     package = lib.mkOption {
       type = lib.types.package;
-      default = gitlab_due_date.${config.nixpkgs.system}.default;
+      inherit (gitlab_due_date.${config.nixpkgs.system}) default;
     };
   };
 
