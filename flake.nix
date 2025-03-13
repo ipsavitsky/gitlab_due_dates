@@ -1,7 +1,6 @@
 {
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    nom.url = "github:maralorn/nix-output-monitor";
     statix.url = "github:oppiliappan/statix";
 
     flake-utils.url = "github:numtide/flake-utils";
@@ -12,7 +11,6 @@
       self,
       nixpkgs,
       statix,
-      nom,
       flake-utils,
     }:
     flake-utils.lib.eachDefaultSystem (
@@ -78,7 +76,6 @@
               nlohmann_json
               spdlog
               statix.packages.${system}.default
-              nom.packages.${system}.default
             ];
           };
         };
