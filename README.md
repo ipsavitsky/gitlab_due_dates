@@ -4,7 +4,7 @@ Automatically move overdue tasks a week from now.
 
 ## Building
 
-``` shell
+```shell
 meson setup build
 meson compile -C build
 ```
@@ -13,7 +13,7 @@ meson compile -C build
 
 `base_url` is optional
 
-``` json
+```json
 {
     "base_url": "gitlab.example.com/api/v4",
     "token": "your token goes here"

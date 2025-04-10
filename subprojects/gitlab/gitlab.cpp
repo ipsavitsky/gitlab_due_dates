@@ -53,11 +53,11 @@ void instance::postpone_issue_by_week(const issue &iss) {
     }
   }
 
-  cpr::Response r =
-      cpr::Put(cpr::Url{std::format("{}/projects/{}/issues/{}", this->base_url,
-                                    iss.project_id, iss.iid)},
-               cpr::Parameters{{"due_date", std::format("{:%F}", current_date)}},
-               cpr::Header{{"PRIVATE-TOKEN", this->token}});
+  cpr::Response r = cpr::Put(
+      cpr::Url{std::format("{}/projects/{}/issues/{}", this->base_url,
+                           iss.project_id, iss.iid)},
+      cpr::Parameters{{"due_date", std::format("{:%F}", current_date)}},
+      cpr::Header{{"PRIVATE-TOKEN", this->token}});
 
   if (r.status_code != 200) {
     throw std::runtime_error(

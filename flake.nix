@@ -2,6 +2,10 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -9,13 +13,21 @@
       self,
       nixpkgs,
       flake-utils,
+      treefmt-nix,
     }:
     flake-utils.lib.eachDefaultSystem (
       system:
       let
         pkgs = import nixpkgs { inherit system; };
+        treefmtModule = treefmt-nix.lib.evalModule pkgs ./nix/treefmt.nix;
       in
       {
+        formatter = treefmtModule.config.build.wrapper;
+
+        checks = {
+          formatting = treefmtModule.config.build.check self;
+        };
+
         packages = rec {
           default = gitlab_due_date;
 

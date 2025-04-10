@@ -16,7 +16,8 @@ struct issue {
   std::string title;
   std::string due_date;
   std::vector<std::string> labels;
-  NLOHMANN_DEFINE_TYPE_INTRUSIVE(issue, id, iid, project_id, title, due_date, labels)
+  NLOHMANN_DEFINE_TYPE_INTRUSIVE(issue, id, iid, project_id, title, due_date,
+                                 labels)
 };
 
 class instance {
@@ -26,7 +27,7 @@ private:
 
 public:
   instance(std::string base_url_, std::string token_)
-      : base_url(base_url_), token(token_){};
+      : base_url(base_url_), token(token_) {};
 
   user get_current_user();
   std::vector<issue> get_overdue_issues_by_user(const user &user);
