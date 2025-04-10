@@ -7,12 +7,13 @@ project(
 
 spdlog = dependency('spdlog', required: true)
 json = dependency('nlohmann_json', required: true)
+cpr = dependency('cpr', required: true)
 gitlab = subproject('gitlab')
 gitlab_dep = gitlab.get_variable('gitlab_dep')
 
 executable(
     'gitlab_due_date',
     'gitlab_due_date.cpp',
-    dependencies: [spdlog, json, gitlab_dep],
+    dependencies: [spdlog, json, cpr, gitlab_dep],
     install: true,
 )

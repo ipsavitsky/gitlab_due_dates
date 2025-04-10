@@ -1,9 +1,23 @@
-#include <nlohmann/json.hpp>
+#include <cpr/cpr.h>
 #include <fstream>
 #include <gitlab.hpp>
+#include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
 #include <stdexcept>
 #include <string>
+
+void send_notification(std::string ntfy_url, std::string ntfy_token,
+                       std::string text) {
+  cpr::Response r = cpr::Post(
+      cpr::Url{ntfy_url},
+      cpr::Header{{"Content-Type", "text/plain"},
+                  {"Authorization", std::format("Bearer {}", ntfy_token)}},
+      cpr::Body{text});
+  if (r.status_code != 200) {
+    throw std::runtime_error(std::format(
+        "Could not send notification, return code: {}", r.status_code));
+  }
+}
 
 int main(int argc, char *argv[]) {
   spdlog::set_level(spdlog::level::debug);
@@ -42,6 +56,17 @@ int main(int argc, char *argv[]) {
     spdlog::info("Overdue issues: {}", iss.title);
 
     g.postpone_issue_by_week(iss);
+  }
+
+  if (conf["ntfy_token"].empty()) {
+    spdlog::warn("No ntfy token, skipping...");
+  } else {
+    if (conf["ntfy_url"].empty()) {
+      spdlog::error("ntfy_token specified, but no ntfy_url in the config");
+    } else {
+      send_notification(conf["ntfy_url"], conf["ntfy_token"],
+                        "Overdue issues postponed....");
+    }
   }
 
   return 0;
