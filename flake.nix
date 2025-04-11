@@ -84,6 +84,7 @@
               libcpr
               nlohmann_json
               spdlog
+              ntfy-sh
             ];
           };
         };
