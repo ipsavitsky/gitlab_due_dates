@@ -9,10 +9,13 @@
 
 void send_notification(std::string ntfy_url, std::string ntfy_topic,
                        std::string ntfy_token, std::string text) {
-  cpr::Response r = cpr::Post(
-      cpr::Url{std::format("{}/{}", ntfy_url, ntfy_topic)},
-      cpr::Header{{"Content-Type", "text/plain"},
-                  {"Authorization", std::format("Bearer {}", ntfy_token)}},
+  cpr::Response r =
+      cpr::Post(cpr::Url{std::format("{}/{}", ntfy_url, ntfy_topic)},
+                cpr::Header{
+                    {"Content-Type", "text/plain"},
+                    {"X-Title", "Gitlab DD"},
+                    {"X-Priority", "4"},
+                    {"Authorization", std::format("Bearer {}", ntfy_token)}},
       cpr::Body{text});
   if (r.status_code != 200) {
     throw std::runtime_error(
@@ -70,7 +73,7 @@ int main(int argc, char *argv[]) {
     std::string ntfy_token = ntfy_conf["token"];
     send_notification(
         ntfy_url, ntfy_topic, ntfy_token,
-        i.size() > 0 ? std::format("{} overdue issues postponed", i.size())
+        i.size() > 0 ? std::format("{} overdue issue(s) postponed", i.size())
                      : "No overdue issues postponed");
   }
 
