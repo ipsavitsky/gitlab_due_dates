@@ -1,0 +1,12 @@
+name: workflow
+
+on:
+  push:
+    branches: ["*"]
+
+jobs:
+  lint:
+    uses: ./.github/workflows/build.yaml
+  build:
+    needs: [lint]
+    uses: ./.github/workflows/build.yaml
