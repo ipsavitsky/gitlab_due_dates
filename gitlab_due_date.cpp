@@ -9,13 +9,12 @@
 
 void send_notification(std::string ntfy_url, std::string ntfy_topic,
                        std::string ntfy_token, std::string text) {
-  cpr::Response r =
-      cpr::Post(cpr::Url{std::format("{}/{}", ntfy_url, ntfy_topic)},
-                cpr::Header{
-                    {"Content-Type", "text/plain"},
-                    {"X-Title", "Gitlab DD"},
-                    {"X-Priority", "4"},
-                    {"Authorization", std::format("Bearer {}", ntfy_token)}},
+  cpr::Response r = cpr::Post(
+      cpr::Url{std::format("{}/{}", ntfy_url, ntfy_topic)},
+      cpr::Header{{"Content-Type", "text/plain"},
+                  {"X-Title", "Gitlab DD"},
+                  {"X-Priority", "4"},
+                  {"Authorization", std::format("Bearer {}", ntfy_token)}},
       cpr::Body{text});
   if (r.status_code != 200) {
     throw std::runtime_error(

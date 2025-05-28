@@ -25,7 +25,8 @@ std::vector<issue> instance::get_overdue_issues_by_user(const user &user) {
       cpr::Get(cpr::Url{std::format("{}/issues", this->base_url)},
                cpr::Parameters{{"assignee_id", std::to_string(user.id)},
                                {"state", "opened"},
-                               {"due_date", "overdue"}},
+                               {"due_date", "overdue"},
+                               {"scope", "all"}},
                cpr::Header{{"PRIVATE-TOKEN", this->token}});
 
   nlohmann::json j;
