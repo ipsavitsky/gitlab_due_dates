@@ -1,3 +1,6 @@
+#ifndef GITLAB_HPP
+#define GITLAB_HPP
+
 #include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
@@ -31,6 +34,8 @@ public:
 
   user get_current_user();
   std::vector<issue> get_overdue_issues_by_user(const user &user);
-  void postpone_issue_by_week(const issue &iss);
+  void postpone_issue(const issue &iss, const std::string &new_due_date);
 };
 } // namespace gitlab
+
+#endif // GITLAB_HPP
