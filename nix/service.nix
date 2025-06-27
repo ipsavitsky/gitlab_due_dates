@@ -16,6 +16,12 @@
       type = lib.types.package;
       inherit (gitlab_due_date.${config.nixpkgs.system}) default;
     };
+
+    timer_calendar = lib.mkOption {
+      type = lib.types.str;
+      default = "Wed *-*-* 00:00:00";
+      description = "The OnCalendar setting for the systemd timer (e.g., 'Wed *-*-* 00:00:00' or 'daily').";
+    };
   };
 
   config = lib.mkIf config.services.gitlab_dd.enable {
@@ -23,7 +29,7 @@
       wantedBy = [ "timers.target" ];
 
       timerConfig = {
-        OnCalendar = "Wed *-*-* 00:00:00";
+        OnCalendar = config.services.gitlab_dd.timer_calendar;
         Unit = "gitlab_due_date.service";
       };
     };
